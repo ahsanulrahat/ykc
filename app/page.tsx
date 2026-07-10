@@ -370,7 +370,7 @@ export default async function Home() {
             <div className="social-links-panel">
               <h4>Socials</h4>
               <div className="social-row">
-                <a href="https://www.facebook.com/search/top?q=%E0%A6%87%E0%A7%9F%E0%A6%BE%E0%A6%B8%E0%A7%87%E0%A6%B0%20%E0%A6%96%E0%A6%BE%E0%A6%A8%20%E0%A6%9A%E0%A7%8C%E0%A6%A7%E0%A7%81%E0%A6%B0%E0%A7%80" className="social-icon-btn" aria-label="Facebook Profile" target="_blank" rel="noopener noreferrer"><i className="fab fa-facebook-f" aria-hidden="true"></i></a>
+                <a href="https://www.facebook.com/Nandailykc" className="social-icon-btn" aria-label="Facebook Profile" target="_blank" rel="noopener noreferrer"><i className="fab fa-facebook-f" aria-hidden="true"></i></a>
                 <a href="#" className="social-icon-btn" aria-label="Twitter Profile"><i className="fab fa-twitter" aria-hidden="true"></i></a>
                 <a href="#" className="social-icon-btn" aria-label="Instagram Profile"><i className="fab fa-instagram" aria-hidden="true"></i></a>
               </div>

@@ -123,7 +123,7 @@ export default function Header() {
 
           <div className="social-icons-desktop">
             <a 
-              href="https://www.facebook.com/search/top?q=%E0%A6%87%E0%A7%9F%E0%A6%BE%E0%A6%B8%E0%A7%87%E0%A6%B0%20%E0%A6%96%E0%A6%BE%E0%A6%A8%20%E0%A6%9A%E0%A7%8C%E0%A6%A7%E0%A7%81%E0%A6%B0%E0%A7%80" 
+              href="https://www.facebook.com/Nandailykc" 
               className="social-icon-btn" 
               aria-label="Facebook Page" 
               target="_blank" 
