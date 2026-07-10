@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -6,7 +7,7 @@ export default function Footer() {
         <div className="container">
             <div className="footer-top">
                 <div className="footer-logo">
-                    <img src="/assets/logo.png" alt="Logo" className="footer-logo-img" />
+                    <Image src="/assets/logo.png" alt="Logo" className="footer-logo-img" width={40} height={40} style={{ height: "auto" }} />
                     <span className="footer-logo-text">Yaser Khan Chowdhury</span>
                 </div>
                 <ul className="footer-menu">

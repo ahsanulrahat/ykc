@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 import ContactForm from "@/components/ContactForm";
 
@@ -93,7 +94,15 @@ export default async function Home() {
 
           <div className="hero-graphic">
             <div className="frame-decoration"></div>
-            <img src="/assets/profile-hero.png" alt="Yaser Khan Chowdhury Portrait" className="profile-img" />
+            <Image 
+              src="/assets/profile-hero.png" 
+              alt="Yaser Khan Chowdhury Portrait" 
+              className="profile-img" 
+              width={420} 
+              height={500} 
+              priority 
+              style={{ objectFit: "cover", height: "auto" }} 
+            />
           </div>
         </div>
       </section>
@@ -134,7 +143,13 @@ export default async function Home() {
               <span className="exp-year">১৫৪</span>
               <span className="exp-text">নান্দাইল আসন</span>
             </div>
-            <img src="/assets/about-profile.jpeg" alt="Yaser Khan Chowdhury working in Mymensingh" />
+            <Image 
+              src="/assets/about-profile.jpeg" 
+              alt="Yaser Khan Chowdhury working in Mymensingh" 
+              width={450} 
+              height={550} 
+              style={{ objectFit: "cover", width: "100%", height: "auto", borderRadius: "15px" }} 
+            />
           </div>
 
           <div className="about-text-side">
@@ -170,13 +185,19 @@ export default async function Home() {
         <div className="container">
           <div className="minister-welcome-card">
             <div className="minister-badge-graphic">
-              <img src="/assets/about-profile.jpeg" alt="Minister Badge Portrait" />
+              <Image 
+                src="/assets/about-profile.jpeg" 
+                alt="Minister Badge Portrait" 
+                width={120} 
+                height={120} 
+                style={{ objectFit: "cover", width: "100px", height: "100px", borderRadius: "50%" }} 
+              />
             </div>
             <div className="minister-welcome-text">
               <h4 className="sub-heading">মাননীয় প্রতিমন্ত্রীর বার্তা</h4>
               <h2 id="welcome-card-title">তথ্যই শক্তি: অবাধ তথ্য প্রবাহ নিশ্চিত করাই আমাদের অঙ্গীকার</h2>
               <p>
-                তথ্য ও সম্প্রচার মন্ত্রণালয়ের প্রতিমন্ত্রী হিসেবে আমার প্রধান কাজ হলো জনগণের তথ্য অধিকার রক্ষা করা এবং সরকারি কর্মকাণ্ডে স্বচ্ছতা ও জবাবদিহিতা নিশ্চিত করা। শহীদ জিয়ার আদর্শ এবং দেশনায়ক তারেক রহমানের ৩১ দফার আলোকেই আমরা একটি আধুনিক, শোষণমুক্ত এবং আইটি-সমৃদ্ধ নতুন বাংলাদেশ গড়ে তুলবো। জনগণের দোড়গোড়ায় নিরবচ্ছিন্ন সেবা ও গুজবমুক্ত সংবাদ পৌঁছে দিতে আমাদের মন্ত্রণালয় দিনরাত কাজ করছে।
+                তথ্য ও সম্প্রচার মন্ত্রণালয়ের প্রতিমন্ত্রী হিসেবে আমার প্রধান কাজ হলো জনগণের তথ্য অধিকার রক্ষা করা এবং সরকারি কর্মকাণ্ডে স্বচ্ছতা ও জবাবদিহিতা নিশ্চিত করা। শহীদ জিয়ার আদর্শ এবং দেশনায়ক তারেক রহমানের ৩১ দফার আলোকেই আমরা একটি আধুনিক, শোষণমুক্ত এবং আইটি-সমৃদ্ধ নতুন বাংলাদেশ গড়ে তুলবো। জনগণের দোড়গোড়ায় নিরবচ্ছিন্ন সেবা ও গুজবমুক্ত সংবাদ পৌঁছে দিতে আমাদের মন্ত্রণালয় দিনরাত কাজ করছে.
               </p>
               <a 
                 href="https://moi.gov.bd" 
@@ -244,7 +265,14 @@ export default async function Home() {
             {posts.map((post) => (
               <div className="blog-card" key={post.id}>
                 <Link href={`/blog/${post.slug}`} className="blog-thumb-link" aria-label={`${post.title} পোস্ট পড়ুন`}>
-                  <img src={post.image} alt={post.title} className="blog-thumb" />
+                  <Image 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="blog-thumb" 
+                    width={400} 
+                    height={250} 
+                    style={{ objectFit: "cover" }} 
+                  />
                 </Link>
                 <div className="blog-body">
                   <div className="blog-meta">{post.date} | By {post.author}</div>
@@ -275,7 +303,14 @@ export default async function Home() {
           <div className="journey-grid">
             {galleryItems.map((num) => (
               <div className="gallery-item" key={num} tabIndex={0} aria-label={`পথচলা গ্যালারি ছবি ${num}`}>
-                <img src={`/assets/gallery-${num}.jpg`} alt={`Journey Moment ${num}`} />
+                <Image 
+                  src={`/assets/gallery-${num}.jpg`} 
+                  alt={`Journey Moment ${num}`} 
+                  width={300} 
+                  height={400} 
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
               </div>
             ))}
           </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 import { notFound } from "next/navigation";
 
@@ -121,7 +122,14 @@ export default async function BlogDetail({
             </header>
 
             <div className="blog-detail-content">
-              <img src={post.image} alt={post.title} />
+              <Image 
+                src={post.image} 
+                alt={post.title} 
+                width={800} 
+                height={450} 
+                priority 
+                style={{ objectFit: "cover", width: "100%", height: "auto", borderRadius: "12px", marginBottom: "30px" }} 
+              />
               {renderContent(post.content)}
             </div>
           </article>

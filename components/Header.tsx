@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/components/ThemeProvider";
 
@@ -42,7 +43,15 @@ export default function Header() {
           onClick={closeMenu}
           aria-label="Yaser Khan Chowdhury - Home"
         >
-          <img src="/assets/logo.png" alt="Logo" className="logo-img" />
+          <Image 
+            src="/assets/logo.png" 
+            alt="Logo" 
+            className="logo-img" 
+            width={60} 
+            height={60} 
+            priority 
+            style={{ height: "auto" }} 
+          />
           <span className="logo-text">Yaser Khan Chowdhury</span>
         </Link>
 

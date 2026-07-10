@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
@@ -99,7 +100,14 @@ export default async function BlogIndex() {
                   className="blog-thumb-link"
                   aria-label={`${post.title} পোস্ট পড়ুন`}
                 >
-                  <img src={post.image} alt={post.title} className="blog-thumb" />
+                  <Image 
+                    src={post.image} 
+                    alt={post.title} 
+                    className="blog-thumb" 
+                    width={400} 
+                    height={250} 
+                    style={{ objectFit: "cover" }} 
+                  />
                 </Link>
                 <div className="blog-body">
                   <div className="blog-meta">{post.date} | By {post.author}</div>
