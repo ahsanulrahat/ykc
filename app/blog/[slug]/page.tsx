@@ -3,7 +3,7 @@ import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 // Dynamic content renderer to render markdown text properly
 function renderContent(content: string) {

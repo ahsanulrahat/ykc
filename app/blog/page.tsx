@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import clientPromise from "@/lib/mongodb";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 async function getAllPosts() {
   try {
@@ -10,7 +10,8 @@ async function getAllPosts() {
     const db = client.db();
     const posts = await db
       .collection("posts")
-      .find({})
+      .find({}, { projection: { title: 1, slug: 1, excerpt: 1, image: 1, date: 1, author: 1 } })
+      .sort({ createdAt: -1 })
       .toArray();
 
     return posts.map(post => ({

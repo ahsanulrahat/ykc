@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -63,8 +64,20 @@ function parseRssXml(xmlText: string) {
   return items;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const secret = searchParams.get("secret");
+
+    // Verify secret for API security against DDoS and DB abuse
+    const webhookSecret = process.env.FB_WEBHOOK_SECRET || "ykc_fb_webhook_secure_key_2026";
+    if (secret !== webhookSecret) {
+      return NextResponse.json(
+        { error: "Unauthorized access: Invalid secret key" },
+        { status: 401 }
+      );
+    }
+
     const rssUrl = process.env.FACEBOOK_RSS_URL;
 
     if (!rssUrl) {
@@ -157,6 +170,14 @@ export async function GET() {
       );
 
       syncedCount++;
+    }
+
+    // Trigger on-demand cache revalidation for pre-rendered pages
+    try {
+      revalidatePath("/blog");
+      revalidatePath("/");
+    } catch (e) {
+      console.warn("Revalidation failed:", e);
     }
 
     // Redirect to the blog archive page after successful sync

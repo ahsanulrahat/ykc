@@ -16,7 +16,7 @@ import {
   GlowPulse,
 } from "@/components/animations/MotionWrapper";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 // Server side data fetch
 async function getRecentPosts() {
@@ -25,7 +25,8 @@ async function getRecentPosts() {
     const db = client.db();
     const posts = await db
       .collection("posts")
-      .find({})
+      .find({}, { projection: { title: 1, slug: 1, excerpt: 1, image: 1, date: 1, author: 1 } })
+      .sort({ createdAt: -1 })
       .limit(3)
       .toArray();
 

@@ -36,3 +36,17 @@ if (!uri) {
 // separate module, the client can be shared across functions.
 export default clientPromise;
 export { client };
+
+// Proactive indexing for query optimization and performance assurance
+if (uri) {
+  clientPromise.then(async (resolvedClient) => {
+    try {
+      const db = resolvedClient.db();
+      await db.collection("posts").createIndex({ slug: 1 }, { unique: true });
+      await db.collection("posts").createIndex({ createdAt: -1 });
+      console.log("MongoDB indexes validated/created successfully.");
+    } catch (e) {
+      console.warn("Unable to create database indexes on initialization:", e);
+    }
+  });
+}

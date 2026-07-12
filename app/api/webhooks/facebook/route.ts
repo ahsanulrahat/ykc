@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
   try {
@@ -85,6 +86,14 @@ export async function POST(request: Request) {
       },
       { upsert: true }
     );
+
+    // Trigger on-demand cache revalidation for pre-rendered pages
+    try {
+      revalidatePath("/blog");
+      revalidatePath("/");
+    } catch (e) {
+      console.warn("Revalidation failed:", e);
+    }
 
     return NextResponse.json({
       success: true,
