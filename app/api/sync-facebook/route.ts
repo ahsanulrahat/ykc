@@ -3,66 +3,123 @@ import clientPromise from "@/lib/mongodb";
 
 export const dynamic = "force-dynamic";
 
+// Helper helper helper function to parse RSS XML using simple regex
+function parseRssXml(xmlText: string) {
+  const items: any[] = [];
+  const itemRegex = /<item>([\s\S]*?)<\/item>/g;
+  let match;
+
+  while ((match = itemRegex.exec(xmlText)) !== null) {
+    const itemContent = match[1];
+
+    // Helper helper to extract tag content
+    const extractTag = (tag: string) => {
+      const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\/${tag}>`, "i");
+      const m = regex.exec(itemContent);
+      return m && m[1] ? m[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/i, "$1").trim() : "";
+    };
+
+    const title = extractTag("title");
+    const link = extractTag("link");
+    const description = extractTag("description");
+    const pubDate = extractTag("pubDate");
+
+    // Extract image URL from enclosure tag
+    const enclosureRegex = /<enclosure[^>]+url="([^"]+)"/i;
+    const enclosureMatch = enclosureRegex.exec(itemContent);
+    let imageUrl = enclosureMatch ? enclosureMatch[1] : "";
+
+    // If no enclosure, try to find img src in description
+    if (!imageUrl && description) {
+      const imgRegex = /<img[^>]+src="([^"]+)"/i;
+      const imgMatch = imgRegex.exec(description);
+      imageUrl = imgMatch ? imgMatch[1] : "";
+    }
+
+    // Strip HTML tags from description for excerpt/content if needed
+    const cleanDescription = description
+      .replace(/<[^>]*>/g, "") // Strip HTML tags
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .trim();
+
+    // Generate unique ID from link or title
+    const guidRegex = /<guid[^>]*>([\s\S]*?)<\/guid>/i;
+    const guidMatch = guidRegex.exec(itemContent);
+    const id = guidMatch ? guidMatch[1].trim() : link || title;
+
+    items.push({
+      id,
+      title: title || cleanDescription.substring(0, 60),
+      link,
+      description: cleanDescription,
+      imageUrl,
+      pubDate,
+    });
+  }
+
+  return items;
+}
+
 export async function GET() {
   try {
-    // 1. Retrieve page configurations from environment variables
-    const pageId = process.env.FACEBOOK_PAGE_ID || "Nandailykc";
-    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN;
+    const rssUrl = process.env.FACEBOOK_RSS_URL;
 
-    if (!accessToken) {
+    if (!rssUrl) {
       return NextResponse.json(
         { 
-          error: "Facebook Access Token is missing.",
-          instruction: "Please set FACEBOOK_ACCESS_TOKEN and FACEBOOK_PAGE_ID in your Vercel Environment Variables to run the sync."
+          error: "Facebook RSS URL is missing.",
+          instruction: "Please convert your public Facebook Page link to RSS using a free tool like FetchRSS (fetchrss.com) or RSS.app, and set the resulting feed link as 'FACEBOOK_RSS_URL' in your Vercel Environment Variables."
         },
         { status: 400 }
       );
     }
 
-    // 2. Fetch feed posts from official Meta Graph API
-    const fbApiUrl = `https://graph.facebook.com/v18.0/${pageId}/posts?fields=id,message,full_picture,created_time,permalink_url&limit=10&access_token=${accessToken}`;
-    
-    console.log(`Syncing from Facebook Page ID: ${pageId}...`);
-    const response = await fetch(fbApiUrl);
-    const data = await response.json();
+    console.log(`Syncing from Facebook RSS Feed: ${rssUrl}...`);
+    const response = await fetch(rssUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      }
+    });
 
-    if (data.error) {
-      console.error("Facebook API error:", data.error);
+    if (!response.ok) {
       return NextResponse.json(
-        { error: "Facebook API returned an error", details: data.error },
+        { error: `Failed to fetch RSS feed. Status: ${response.status}` },
         { status: 500 }
       );
     }
 
-    const posts = data.data || [];
-    if (posts.length === 0) {
-      return NextResponse.json({ success: true, message: "No posts found to sync" });
+    const xmlText = await response.text();
+    const feedItems = parseRssXml(xmlText);
+
+    if (feedItems.length === 0) {
+      return NextResponse.json({ success: true, message: "No posts found in the RSS feed to sync" });
     }
 
-    // 3. Connect to DB and upsert posts
+    // Connect to DB and upsert posts
     const client = await clientPromise;
     const db = client.db();
     const collection = db.collection("posts");
 
     let syncedCount = 0;
 
-    for (const post of posts) {
-      const { id, message, full_picture, created_time, permalink_url } = post;
-      
-      if (!message) continue; // Skip posts with no text content (e.g., pure links or image uploads without caption)
+    for (const item of feedItems) {
+      const { id, title, link, description, imageUrl, pubDate } = item;
 
-      const cleanMessage = message.trim();
-      const firstLine = cleanMessage.split("\n")[0].trim();
-      const title = firstLine.length > 70 
-        ? firstLine.substring(0, 67) + "..." 
-        : firstLine || "ফেসবুক আপডেট";
+      if (!description) continue;
 
-      const excerpt = cleanMessage.length > 180 
-        ? cleanMessage.substring(0, 177) + "..." 
-        : cleanMessage;
+      const excerpt = description.length > 180 
+        ? description.substring(0, 177) + "..." 
+        : description;
 
-      const postDate = created_time 
-        ? new Date(created_time).toLocaleDateString("en-US", {
+      // Hash or format slug from guid/link
+      const uniqueId = id.replace(/[^a-zA-Z0-9]/g, "-").substring(0, 50);
+      const slug = `fb-${uniqueId}`;
+
+      const postDate = pubDate 
+        ? new Date(pubDate).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -73,19 +130,17 @@ export async function GET() {
             day: "numeric",
           });
 
-      const slug = `fb-${id}`;
-      
-      let content = cleanMessage;
-      if (permalink_url) {
-        content += `\n\n---\n[মূল পোস্টটি ফেসবুকে দেখুন](${permalink_url})`;
+      let content = description;
+      if (link) {
+        content += `\n\n---\n[মূল পোস্টটি ফেসবুকে দেখুন](${link})`;
       }
 
       const blogPost = {
-        title,
+        title: title || "ফেসবুক আপডেট",
         slug,
         excerpt,
         content,
-        image: full_picture || "/assets/post-win-election.jpeg",
+        image: imageUrl || "/assets/post-win-election.jpeg",
         date: postDate,
         author: "Yaser Khan Chowdhury",
         facebook_id: id,
@@ -109,7 +164,7 @@ export async function GET() {
     return NextResponse.redirect(`${origin}/blog?synced=${syncedCount}`);
 
   } catch (err) {
-    console.error("Facebook feed sync error:", err);
+    console.error("Facebook RSS feed sync error:", err);
     return NextResponse.json(
       { error: "Internal server error performing sync operation" },
       { status: 500 }
