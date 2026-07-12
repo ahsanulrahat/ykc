@@ -75,7 +75,12 @@ async function getAllPosts() {
   }
 }
 
-export default async function BlogIndex() {
+export default async function BlogIndex({
+  searchParams,
+}: {
+  searchParams: Promise<{ synced?: string }>;
+}) {
+  const { synced } = await searchParams;
   const posts = await getAllPosts();
 
   return (
@@ -87,6 +92,27 @@ export default async function BlogIndex() {
           <p className="page-subtitle">আমাদের কার্যক্রম, প্রেস রিলিজ এবং নান্দাইলবাসীর উদ্দেশ্যে বিশেষ বার্তা সমূহ</p>
         </div>
       </section>
+
+      {/* Sync Success Notification */}
+      {synced !== undefined && (
+        <div className="container" style={{ marginTop: "30px", marginBottom: "-10px" }}>
+          <div className="sync-success-banner" style={{
+            padding: "15px 20px",
+            backgroundColor: "rgba(0, 104, 55, 0.1)",
+            border: "1px solid rgba(0, 104, 55, 0.3)",
+            borderRadius: "8px",
+            color: "#006837",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            fontSize: "15px",
+            fontWeight: "500"
+          }}>
+            <i className="fas fa-check-circle" style={{ fontSize: "18px" }}></i>
+            <span>ফেসবুক পেজ থেকে সফলভাবে {synced}টি আপডেট সিঙ্ক করা হয়েছে।</span>
+          </div>
+        </div>
+      )}
 
       {/* Blog Archive Section */}
       <section className="updates-section" aria-labelledby="archive-title">
