@@ -38,25 +38,29 @@ export default function Header() {
 
   // Listen to hash changes or page mount to scroll smoothly to hash targets (e.g. #contact)
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const handleHashScroll = () => {
-      if (typeof window !== "undefined" && window.location.hash) {
-        const hash = window.location.hash;
-        if (hash === "#contact") {
-          const target = document.querySelector("#contact");
-          if (target) {
-            const timer = setTimeout(() => {
-              const headerOffset = 90;
-              const elementPosition = target.getBoundingClientRect().top;
-              const offsetPosition = elementPosition + window.scrollY - headerOffset;
-              window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-            }, 200); // 200ms delay to allow page rendering/hydration to stabilize
-            return () => clearTimeout(timer);
-          }
+      const hash = window.location.hash;
+      if (hash === "#contact") {
+        const target = document.getElementById("contact");
+        if (target) {
+          const headerOffset = 90;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
       }
     };
 
-    handleHashScroll();
+    // Run after a slight delay to allow hydration and rendering to stabilize
+    const timer = setTimeout(handleHashScroll, 300);
+
+    window.addEventListener("hashchange", handleHashScroll);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("hashchange", handleHashScroll);
+    };
   }, [pathname]);
 
   // Prevent body scroll when menu is open
