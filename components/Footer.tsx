@@ -23,8 +23,7 @@ export default function Footer() {
                     <li><Link href="/vision-2030" className="footer-menu-link">Vision 2030</Link></li>
                     <li><Link href="/blog" className="footer-menu-link">Blog</Link></li>
                     <li>
-                      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                      <a href="/#contact" className="footer-menu-link">Contact</a>
+                      <Link href="/#contact" className="footer-menu-link">Contact</Link>
                     </li>
                 </ul>
                 <div className="footer-socials">

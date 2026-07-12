@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 
@@ -295,12 +296,12 @@ export default function Vision2030() {
               <h2>আসুন, একসাথে গড়ি আগামীর নান্দাইল</h2>
               <p>আপনার মতামত, পরামর্শ ও সহযোগিতা আমাদের এই ভিশন বাস্তবায়নে অপরিহার্য। যোগাযোগ করুন অথবা আমাদের সর্বশেষ কার্যক্রম জানতে ব্লগ পড়ুন।</p>
               <div className="vision-cta-buttons">
-                <a href="/#contact" className="p-btn p-btn-primary">
+                <Link href="/#contact" className="p-btn p-btn-primary">
                   <i className="fas fa-envelope" aria-hidden="true"></i> যোগাযোগ করুন
-                </a>
-                <a href="/blog" className="p-btn p-btn-outline vision-cta-outline">
+                </Link>
+                <Link href="/blog" className="p-btn p-btn-outline vision-cta-outline">
                   <i className="fas fa-newspaper" aria-hidden="true"></i> ব্লগ পড়ুন
-                </a>
+                </Link>
               </div>
             </div>
           </FadeInUp>

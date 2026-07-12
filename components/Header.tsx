@@ -36,6 +36,29 @@ export default function Header() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Listen to hash changes or page mount to scroll smoothly to hash targets (e.g. #contact)
+  useEffect(() => {
+    const handleHashScroll = () => {
+      if (typeof window !== "undefined" && window.location.hash) {
+        const hash = window.location.hash;
+        if (hash === "#contact") {
+          const target = document.querySelector("#contact");
+          if (target) {
+            const timer = setTimeout(() => {
+              const headerOffset = 90;
+              const elementPosition = target.getBoundingClientRect().top;
+              const offsetPosition = elementPosition + window.scrollY - headerOffset;
+              window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+            }, 200); // 200ms delay to allow page rendering/hydration to stabilize
+            return () => clearTimeout(timer);
+          }
+        }
+      }
+    };
+
+    handleHashScroll();
+  }, [pathname]);
+
   // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
