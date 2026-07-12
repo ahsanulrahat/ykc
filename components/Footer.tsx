@@ -5,6 +5,14 @@ export default function Footer() {
   return (
     <footer className="site-footer">
         <div className="container">
+            {/* Footer quote / tagline */}
+            <div className="footer-quote">
+                <p className="footer-quote-text">
+                    &quot;জনগণের সেবায় নিবেদিত, ন্যায়ের পথে অবিচল&quot;
+                </p>
+                <p className="footer-quote-attribution">— ইয়াসের খান চৌধুরী</p>
+            </div>
+
             <div className="footer-top">
                 <div className="footer-logo">
                     <Image src="/assets/logo.png" alt="Logo" className="footer-logo-img" width={40} height={40} style={{ height: "auto" }} />
@@ -21,8 +29,8 @@ export default function Footer() {
                 </ul>
                 <div className="footer-socials">
                     <a href="https://www.facebook.com/Nandailykc" className="footer-social-btn" aria-label="Facebook Page" target="_blank" rel="noopener noreferrer"><i className="fab fa-facebook-f"></i></a>
-                    <a href="#" className="footer-social-btn"><i className="fab fa-twitter"></i></a>
-                    <a href="#" className="footer-social-btn"><i className="fab fa-instagram"></i></a>
+                    <a href="#" className="footer-social-btn" aria-label="Twitter Profile"><i className="fab fa-twitter"></i></a>
+                    <a href="#" className="footer-social-btn" aria-label="Instagram Profile"><i className="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div className="footer-bottom">
