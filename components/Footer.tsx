@@ -28,8 +28,8 @@ export default function Footer() {
                 </ul>
                 <div className="footer-socials">
                     <a href="https://www.facebook.com/Nandailykc" className="footer-social-btn" aria-label="Facebook Page" target="_blank" rel="noopener noreferrer"><i className="fab fa-facebook-f"></i></a>
-                    <a href="#" className="footer-social-btn" aria-label="Twitter Profile"><i className="fab fa-twitter"></i></a>
-                    <a href="#" className="footer-social-btn" aria-label="Instagram Profile"><i className="fab fa-instagram"></i></a>
+                    <a href="https://twitter.com" className="footer-social-btn" aria-label="Twitter Profile" target="_blank" rel="noopener noreferrer"><i className="fab fa-twitter"></i></a>
+                    <a href="https://instagram.com" className="footer-social-btn" aria-label="Instagram Profile" target="_blank" rel="noopener noreferrer"><i className="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div className="footer-bottom">

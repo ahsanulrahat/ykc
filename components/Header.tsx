@@ -167,7 +167,7 @@ export default function Header() {
               >
                 <i className="fab fa-facebook-f" aria-hidden="true"></i>
               </a>
-              <a href="#" className="social-icon-btn" aria-label="Twitter Profile">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon-btn" aria-label="Twitter Profile">
                 <i className="fab fa-twitter" aria-hidden="true"></i>
               </a>
             </div>
@@ -246,10 +246,10 @@ export default function Header() {
             <a href="https://www.facebook.com/Nandailykc" className="social-icon-btn" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
               <i className="fab fa-facebook-f" aria-hidden="true"></i>
             </a>
-            <a href="#" className="social-icon-btn" aria-label="Twitter">
+            <a href="https://twitter.com" className="social-icon-btn" aria-label="Twitter" target="_blank" rel="noopener noreferrer">
               <i className="fab fa-twitter" aria-hidden="true"></i>
             </a>
-            <a href="#" className="social-icon-btn" aria-label="Instagram">
+            <a href="https://instagram.com" className="social-icon-btn" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
               <i className="fab fa-instagram" aria-hidden="true"></i>
             </a>
           </div>
