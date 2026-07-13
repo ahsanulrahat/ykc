@@ -30,11 +30,25 @@ function parseRssXml(xmlText: string) {
     const enclosureMatch = enclosureRegex.exec(itemContent);
     let imageUrl = enclosureMatch ? enclosureMatch[1] : "";
 
-    // If no enclosure, try to find img src in description
+    // If no enclosure, try media:content
+    if (!imageUrl) {
+      const mediaRegex = /<media:content[^>]+url="([^"]+)"/i;
+      const mediaMatch = mediaRegex.exec(itemContent);
+      if (mediaMatch) {
+        imageUrl = mediaMatch[1];
+      }
+    }
+
+    // If still no image, try to find img src in description
     if (!imageUrl && description) {
       const imgRegex = /<img[^>]+src="([^"]+)"/i;
       const imgMatch = imgRegex.exec(description);
       imageUrl = imgMatch ? imgMatch[1] : "";
+    }
+
+    // Decode HTML entities in image URL (often required for FB CDN links in XML)
+    if (imageUrl) {
+      imageUrl = imageUrl.replace(/&amp;/g, "&");
     }
 
     // Strip HTML tags from description for excerpt/content if needed
@@ -68,6 +82,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const secret = searchParams.get("secret");
+    const isCron = searchParams.get("isCron") === "true";
 
     // Verify secret for API security against DDoS and DB abuse
     const webhookSecret = process.env.FB_WEBHOOK_SECRET || "ykc_fb_webhook_secure_key_2026";
@@ -180,7 +195,12 @@ export async function GET(request: Request) {
       console.warn("Revalidation failed:", e);
     }
 
-    // Redirect to the blog archive page after successful sync
+    // Return JSON if triggered by cron, otherwise redirect
+    if (isCron) {
+      return NextResponse.json({ success: true, message: `Successfully synced ${syncedCount} posts` });
+    }
+
+    // Redirect to the blog archive page after successful manual sync
     const origin = process.env.NEXT_PUBLIC_SITE_URL || "https://yaserkhanchowdhury.com";
     return NextResponse.redirect(`${origin}/blog?synced=${syncedCount}`);
 
