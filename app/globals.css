@@ -48,6 +48,7 @@ html.dark {
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 100px;
     font-size: 16px;
 }
 

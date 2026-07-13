@@ -39,27 +39,51 @@ export default function Header() {
   // Listen to hash changes or page mount to scroll smoothly to hash targets (e.g. #contact)
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (!hash) return;
 
-    const handleHashScroll = () => {
-      const hash = window.location.hash;
-      if (hash === "#contact") {
-        const target = document.getElementById("contact");
-        if (target) {
-          const headerOffset = 90;
-          const elementPosition = target.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.scrollY - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        }
+    const id = hash.replace("#", "");
+    let cancelled = false;
+    let lastScrollTop = -1;
+
+    const scrollToTarget = () => {
+      const target = document.getElementById(id);
+      if (!target || cancelled) return false;
+      const headerOffset = 90;
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.scrollY - headerOffset;
+      // Only scroll if the target position has changed (layout shift from lazy images)
+      if (Math.abs(offsetPosition - lastScrollTop) > 5) {
+        lastScrollTop = offsetPosition;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
       }
+      return true;
     };
 
-    // Run after a slight delay to allow hydration and rendering to stabilize
-    const timer = setTimeout(handleHashScroll, 300);
+    // Retry multiple times to handle lazy-loaded images causing layout shifts
+    // Keep re-scrolling as the page height changes
+    let attempts = 0;
+    const maxAttempts = 15;
+    const tryScroll = () => {
+      if (cancelled || attempts >= maxAttempts) return;
+      scrollToTarget();
+      attempts++;
+      setTimeout(tryScroll, 300);
+    };
+    // Wait for initial render, then start scrolling
+    const timer = setTimeout(tryScroll, 200);
 
-    window.addEventListener("hashchange", handleHashScroll);
+    const handleHashChange = () => {
+      attempts = 0;
+      lastScrollTop = -1;
+      tryScroll();
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
     return () => {
+      cancelled = true;
       clearTimeout(timer);
-      window.removeEventListener("hashchange", handleHashScroll);
+      window.removeEventListener("hashchange", handleHashChange);
     };
   }, [pathname]);
 
@@ -83,7 +107,8 @@ export default function Header() {
       router.push("/" + hash);
       return;
     }
-    const target = document.querySelector(hash.replace("/", "").replace("#", "#"));
+    const id = hash.replace("#", "");
+    const target = document.getElementById(id);
     if (target) {
       const headerOffset = 90;
       const elementPosition = target.getBoundingClientRect().top;
@@ -91,6 +116,15 @@ export default function Header() {
       window.scrollTo({ top: offsetPosition, behavior: "smooth" });
     }
   }, [pathname, router, closeMenu]);
+
+  // Handle Home link click — scroll to top if already on homepage
+  const handleHomeClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    closeMenu();
+    if (pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [pathname, closeMenu]);
 
   const staggerDelays = [0, 0.06, 0.12, 0.18];
 
@@ -129,6 +163,7 @@ export default function Header() {
                   <Link
                     href={link.href}
                     className={`nav-link ${isActive(link.href, link.matchExact) ? "active" : ""}`}
+                    onClick={link.href === "/" ? handleHomeClick : undefined}
                   >
                     {link.label}
                   </Link>
@@ -226,7 +261,7 @@ export default function Header() {
                   <Link
                     href={link.href}
                     className={`mobile-nav-link ${isActive(link.href, link.matchExact) ? "active" : ""}`}
-                    onClick={closeMenu}
+                    onClick={link.href === "/" ? handleHomeClick : closeMenu}
                   >
                     {link.label}
                   </Link>

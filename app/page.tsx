@@ -190,9 +190,10 @@ export default async function Home() {
                     স্মার্ট নান্দাইল ভিশন
                   </Link>
                 </GlowPulse>
-                <Link href="#contact" className="p-btn p-btn-outline" aria-label="যোগাযোগ ফরমে যান">
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a href="/#contact" className="p-btn p-btn-outline" aria-label="যোগাযোগ ফরমে যান">
                   Contact me
-                </Link>
+                </a>
               </div>
             </FadeInUp>
           </div>
