@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 const navLinks = [
   { href: "/", label: "Home", matchExact: true },
   { href: "/vision-2030", label: "Vision 2030", matchExact: true },
+  { href: "/monitoring", label: "Monitoring", matchExact: true },
   { href: "/blog", label: "Blog", matchExact: false },
 ];
 
